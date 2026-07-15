@@ -1,99 +1,44 @@
-#[derive(Debug)]
+mod errors;
+mod services;
+mod models;
 
-struct Contact {
-	name: String,
-	phone: String,
-	email: String,
-}
-
-fn find_contact<'a>(
-
-	contacts: &'a Vec<Contact>,
-	name: &str,
-
-) -> Option<&'a Contact> {
-
-	for person in contacts.iter() {
-
-		if person.name == name {
-
-			return Some(person);
-
-		}
-
-	}
-
-	None
-
-}
-
-fn update_phone(contacts: &mut Vec<Contact>, name: &str, new_phone: &str) {
-
-	for person in contacts.iter_mut() {
-
-		if person.name == name {
-
-			person.phone = String::from(new_phone);
-			break;
-
-		}
-
-	}
-
-}
+use models::category::Category;
+use models::contact::Contact;
+use services::contact_service::validate_contact;
 
 fn main() {
 
-	let mut contacts = vec![
 
-		Contact {
+	let c = Contact::new("Ada", "Lovelace", "553-3454", "ada@example.com");
+	let cat = Category::new("Work");
 
-			name: String::from("Alice"),
-			phone: String::from("0978645311"),
-			email: String::from("alice@gmail.com"),
 
-		},
+	println!("Created contact: {} ({})", c.full_name(), c.phone);
+	println!("Created Category: {}", cat.name);
 
-		Contact {
-
-			name: String::from("Bob"),
-			phone: String::from("0960748478"),
-			email: String::from("bab@fmail.com"),
-
-		},
-
-		Contact {
-
-			name: String::from("Charlie"),
-			phone: String::from("0767334621"),
-			email: String::from("charlie@whomail.com"),
-
-		},
-
+	let existing: Vec<Contact> = vec![
+		Contact::new("Ada", "Lovelace", "555-1234", "ada@email.com"),
+	
 	];
 
-	if let Some(person) = find_contact(&contacts, "Bob") {
+	let new_contact = Contact::new("Grace", "Hopper", "444-3321", "grace@example.com");
+	match validate_contact(&new_contact, &existing) {
+		Ok(()) => println!("Valid contact: {}", new_contact.full_name()),
+		Err(e) => println!("Rejected: {}", e),
+	}
 
-		println!("Before update: {:?}", person);
+	let duplicate = Contact::new("Fake", "Ada", "555-1234", "diff@ex.com");
+	match validate_contact(&duplicate, &existing) {
+		Ok(()) => println!("Valid contact: {}", duplicate.full_name()),
+		Err(e) => println!("Rejected: {}", e),
 
 	}
 
-	update_phone(&mut contacts, "Bob", "0966554433");
-
-	if let Some(person) = find_contact(&contacts, "Bob") {
-
-		println!("After update: {:?}", person);
+	let bad_email = Contact::new("No", "Email", "555-0000", "not-an-email");
+	match validate_contact(&bad_email, &existing) {
+		Ok(()) => println!("Valid contact: {}", bad_email.full_name()),
+		Err(e) => println!("Rejected: {}", e),
 
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
