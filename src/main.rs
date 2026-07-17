@@ -1,6 +1,7 @@
 mod errors;
 mod services;
 mod models;
+mod ui;
 
 use models::category::Category;
 use models::contact::Contact;
@@ -40,5 +41,8 @@ fn main() {
 		Err(e) => println!("Rejected: {}", e),
 
 	}
+
+	let mut store: Vec<Contact> = Vec::new();
+	ui::menu::run(&mut store);
 
 }
