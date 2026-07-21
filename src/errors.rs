@@ -6,6 +6,7 @@ pub enum AppError {
     InvalidEmail,
     InvalidPhone,
     DuplicateContact,
+	DatabaseError(String),
     NotFound,
 }
 
@@ -16,6 +17,7 @@ impl fmt::Display for AppError {
             AppError::InvalidEmail => write!(f, "Email format is invalid"),
             AppError::InvalidPhone => write!(f, "Phone format is invalid"),
             AppError::DuplicateContact => write!(f, "A contact with this phone or email already exists"),
+			AppError::DatabaseError(msg) => write!(f, "Database error: {}", msg),
             AppError::NotFound => write!(f, "Contact not found"),
         }
     }
